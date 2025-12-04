@@ -1,19 +1,19 @@
 import { useRouter } from "expo-router";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { Alert, Button, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { auth } from "../firebase/config";
 
-
-export default function Login() {
+export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      router.replace("/(tabs)/");
+      await createUserWithEmailAndPassword(auth, email, password);
+      Alert.alert("Success", "User registered successfully!");
+      router.replace("/login");
     } catch (error) {
       Alert.alert("Error", error.message);
     }
@@ -21,16 +21,16 @@ export default function Login() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Login</Text>
+      <Text style={styles.header}>Register</Text>
 
       <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" />
 
       <TextInput style={styles.input} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry />
 
-      <Button title="Log In" onPress={handleLogin} />
+      <Button title="Register" onPress={handleRegister} />
 
-      <TouchableOpacity onPress={() => router.push("/register")}>
-        <Text style={{ marginTop: 15, color: "#007bff" }}>Nemate nalog? Registrujte se ovde.</Text>
+      <TouchableOpacity onPress={() => router.push("/login")}>
+        <Text style={{ marginTop: 15, color: "#007bff" }}>Imate nalog? Prijavite se ovde.</Text>
       </TouchableOpacity>
     </View>
   );

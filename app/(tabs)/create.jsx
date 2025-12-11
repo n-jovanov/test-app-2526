@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
+import { createContact } from "../../firebase/firestore/contactsCRUD";
 
 export default function Create() {
   const [firstName, setFirstName] = useState("");
@@ -14,19 +15,23 @@ export default function Create() {
     router.push("/help");
   };
 
-  const handleSubmit = () => {
-    console.log("Uneto:");
-    console.log({ firstName, lastName, address, phone });
+  const handleSubmit = async () => {
+    const contactData = { firstName, lastName, address, phone };
 
+    await createContact(contactData);
+
+    // Reset forme
     setFirstName("");
     setLastName("");
     setAddress("");
     setPhone("");
+
+    router.push("/(tabs)");
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Create User</Text>
+      <Text style={styles.header}>Create Contact</Text>
 
       <Button title="?" onPress={openHelp} />
 

@@ -1,18 +1,29 @@
 import { useRouter } from "expo-router";
 import { signOut } from "firebase/auth";
-import { Button, FlatList, Text, View } from "react-native";
-import User from "../../components/User";
+import { useEffect, useState } from "react";
+import { Button, FlatList, StyleSheet, Text, TextInput, View } from "react-native";
+import Contact from "../../components/Contact";
 import { auth } from "../../firebase/config";
+import { getAllContacts } from "../../firebase/firestore/contactsCRUD";
 
 export default function Home() {
   const router = useRouter();
   const currentUser = auth.currentUser;
+  const [contacts, setContacts] = useState([]);
+  const [search, setSearch] = useState("");
 
-  const users = [
-    { id: "1", firstName: "Marko", lastName: "Marković", address: "Ulica 1", phone: "123-456-789" },
-    { id: "2", firstName: "Jovan", lastName: "Jovanović", address: "Ulica 2", phone: "987-654-321" },
-    { id: "3", firstName: "Nikola", lastName: "Nikolić", address: "Ulica 3", phone: "555-555-555" },
-  ];
+  useEffect(() => {
+    const unsubscribe = getAllContacts((data) => {
+      setContacts(data);
+    });
+
+    // cleanup kada se ekran ugasi
+    return () => unsubscribe();
+  }, []);
+
+  const filteredContacts = contacts.filter(
+    (c) => c.firstName.toLowerCase().includes(search.toLowerCase()) || c.lastName.toLowerCase().includes(search.toLowerCase())
+  );
 
   const handleLogout = async () => {
     try {
@@ -29,11 +40,26 @@ export default function Home() {
 
       <Button title="Logout" onPress={handleLogout} />
 
+      <TextInput style={styles.input} placeholder="Search" value={search} onChangeText={setSearch} />
+
       <FlatList
-        data={users}
+        data={filteredContacts}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <User firstName={item.firstName} lastName={item.lastName} address={item.address} phone={item.phone} />}
+        renderItem={({ item }) => (
+          <Contact id={item.id} firstName={item.firstName} lastName={item.lastName} address={item.address} phone={item.phone} />
+        )}
       />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    height: 40,
+    marginVertical: 10,
+  },
+});

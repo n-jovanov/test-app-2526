@@ -1,11 +1,14 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { deleteContact } from "../firebase/firestore/contactsCRUD";
+
+import { useDispatch } from "react-redux";
+import { removeContact } from "../store/contactsSlice";
 
 const Contact = ({ id, firstName, lastName, address, phone }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const handleEdit = () => {
     router.push({
@@ -21,7 +24,7 @@ const Contact = ({ id, firstName, lastName, address, phone }) => {
   };
 
   const handleDelete = () => {
-    deleteContact(id);
+    dispatch(removeContact(id));
   };
 
   return (

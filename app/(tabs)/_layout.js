@@ -20,6 +20,22 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => <Icon name="add-circle" size={size} color={color} />,
         }}
       />
+
+      <Tabs.Screen
+        name="counter"
+        options={{
+          title: "Counter",
+          tabBarIcon: ({ color, size }) => <Icon name="analytics" size={size} color={color} />,
+        }}
+      />
+
+      <Tabs.Screen
+        name="total"
+        options={{
+          title: "Total",
+          tabBarIcon: ({ color, size }) => <Icon name="stats-chart" size={size} color={color} />,
+        }}
+      />
     </Tabs>
   );
 }

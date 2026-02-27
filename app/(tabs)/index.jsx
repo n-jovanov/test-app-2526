@@ -4,25 +4,28 @@ import { useEffect, useState } from "react";
 import { Button, FlatList, StyleSheet, Text, TextInput, View } from "react-native";
 import Contact from "../../components/Contact";
 import { auth } from "../../firebase/config";
-import { getAllContacts } from "../../firebase/firestore/contactsCRUD";
+
+import { useDispatch, useSelector } from "react-redux";
+import { startContactsListener } from "../../store/contactsSlice";
 
 export default function Home() {
   const router = useRouter();
   const currentUser = auth.currentUser;
-  const [contacts, setContacts] = useState([]);
   const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    const unsubscribe = getAllContacts((data) => {
-      setContacts(data);
-    });
+  const dispatch = useDispatch();
+  const contacts = useSelector((state) => state.contacts.contacts);
 
-    // cleanup kada se ekran ugasi
-    return () => unsubscribe();
+  useEffect(() => {
+    const unsubscribe = dispatch(startContactsListener());
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, []);
 
   const filteredContacts = contacts.filter(
-    (c) => c.firstName.toLowerCase().includes(search.toLowerCase()) || c.lastName.toLowerCase().includes(search.toLowerCase())
+    (c) => c.firstName.toLowerCase().includes(search.toLowerCase()) || c.lastName.toLowerCase().includes(search.toLowerCase()),
   );
 
   const handleLogout = async () => {

@@ -1,7 +1,9 @@
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
-import { createContact } from "../../firebase/firestore/contactsCRUD";
+
+import { useDispatch } from "react-redux";
+import { addContact } from "../../store/contactsSlice";
 
 export default function Create() {
   const [firstName, setFirstName] = useState("");
@@ -9,6 +11,7 @@ export default function Create() {
   const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
 
+  const dispatch = useDispatch();
   const router = useRouter();
 
   const openHelp = () => {
@@ -18,7 +21,7 @@ export default function Create() {
   const handleSubmit = async () => {
     const contactData = { firstName, lastName, address, phone };
 
-    await createContact(contactData);
+    await dispatch(addContact(contactData));
 
     // Reset forme
     setFirstName("");
